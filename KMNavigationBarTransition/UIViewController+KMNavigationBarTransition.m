@@ -76,7 +76,7 @@
         [self.navigationController.navigationBar setShadowImage:self.km_transitionNavigationBar.shadowImage];
         if (!transitionViewController || [transitionViewController isEqual:self]) {
             [self.km_transitionNavigationBar removeFromSuperview];
-            self.km_transitionNavigationBar = nil; 
+            self.km_transitionNavigationBar = nil;
         }
     }
     if ([transitionViewController isEqual:self]) {
@@ -128,13 +128,17 @@
     [self km_adjustScrollViewContentOffsetIfNeeded];
     UINavigationBar *bar = [[UINavigationBar alloc] init];
     bar.km_isFakeBar = YES;
-    bar.barStyle = self.navigationController.navigationBar.barStyle;
-    if (bar.translucent != self.navigationController.navigationBar.translucent) {
-        bar.translucent = self.navigationController.navigationBar.translucent;
+    if ([bar respondsToSelector:@selector(standardAppearance)]) {
+        bar.standardAppearance = self.navigationController.navigationBar.standardAppearance;
+    } else {
+        bar.barStyle = self.navigationController.navigationBar.barStyle;
+        if (bar.translucent != self.navigationController.navigationBar.translucent) {
+            bar.translucent = self.navigationController.navigationBar.translucent;
+        }
+        bar.barTintColor = self.navigationController.navigationBar.barTintColor;
+        [bar setBackgroundImage:[self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault] forBarMetrics:UIBarMetricsDefault];
+        bar.shadowImage = self.navigationController.navigationBar.shadowImage;
     }
-    bar.barTintColor = self.navigationController.navigationBar.barTintColor;
-    [bar setBackgroundImage:[self.navigationController.navigationBar backgroundImageForBarMetrics:UIBarMetricsDefault] forBarMetrics:UIBarMetricsDefault];
-    bar.shadowImage = self.navigationController.navigationBar.shadowImage;
     [self.km_transitionNavigationBar removeFromSuperview];
     self.km_transitionNavigationBar = bar;
     [self km_resizeTransitionNavigationBarFrame];
@@ -158,7 +162,7 @@
 #endif
         const CGFloat topContentOffsetY = -contentInset.top;
         const CGFloat bottomContentOffsetY = scrollView.contentSize.height - (CGRectGetHeight(scrollView.bounds) - contentInset.bottom);
-    
+        
         CGPoint adjustedContentOffset = scrollView.contentOffset;
         if (adjustedContentOffset.y > bottomContentOffsetY) {
             adjustedContentOffset.y = bottomContentOffsetY;
